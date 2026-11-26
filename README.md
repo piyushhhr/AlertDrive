@@ -1,3 +1,4 @@
+
 # AlertDrive
 
 ### Real-Time Driver Drowsiness Detection and Alert System
@@ -11,6 +12,7 @@
 ![Hardware](https://img.shields.io/badge/Hardware-Validated-green)
 ![Testing](https://img.shields.io/badge/Testing-Completed-green)
 ![Status](https://img.shields.io/badge/Status-Working_Prototype-success)
+![Release](https://img.shields.io/badge/Release-v1.0.0-blue)
 
 ### Download APK
 
@@ -66,6 +68,9 @@ AlertDrive addresses this problem through continuous driver monitoring and autom
 - Dedicated Android application.
 - Integrated and validated hardware.
 - Completed prototype testing.
+- Independent component testing programs.
+- Documented product testing procedures.
+- Downloadable Android APK.
 
 ## 5. System Architecture
 
@@ -220,6 +225,8 @@ AlertDrive uses multiple monitoring states to determine the appropriate hardware
 | CONNECTION_LOST | LED | 100 ms ON, 100 ms OFF |
 | CONNECTION_LOST | Buzzer | 200 ms ON, 2800 ms OFF |
 
+These values represent the configured firmware timing rather than independently measured alert response times.
+
 ## 12. Communication Architecture
 
 The ESP32-S3 establishes a dedicated local Wi-Fi access point for communication with the Android application.
@@ -272,6 +279,17 @@ The AlertDrive Android application serves as the primary image-processing and dr
 - Start and stop monitoring controls.
 - Offline operation.
 
+### Application Source Code
+
+The Android application is developed using Kotlin in Android Studio.
+
+The complete application project is available in:
+
+[Android Application Source](app/source/)
+
+The source project includes Kotlin application files, Android resources, Gradle configuration and the face landmark model asset.
+
+The prebuilt APK is available through the download section at the top of this README.
 
 ## 14. Installation and Setup
 
@@ -294,6 +312,8 @@ The AlertDrive Android application serves as the primary image-processing and dr
 6. Verify the hardware connections.
 7. Compile the firmware.
 8. Upload the firmware to the ESP32-S3.
+
+If the ESP32 already contains the working AlertDrive firmware, uploading the firmware again is unnecessary.
 
 ### Arduino IDE Configuration
 
@@ -342,17 +362,20 @@ flowchart TD
     H -->|Closing| J[Blink LED]
     H -->|Warning| K[LED and Buzzer]
     H -->|Drowsy| L[LED, Buzzer and Motors]
-    H -->|No Face| M[Visual Warning]
-    I --> F
-    J --> F
-    K --> F
-    L --> F
-    M --> F
+    H -->|No Face| M[Slow LED Flash]
+    I --> N[Continue Monitoring]
+    J --> N
+    K --> N
+    L --> N
+    M --> N
+    N --> F
 ```
 
 The system continuously captures and processes camera frames while driver monitoring is active.
 
 The Android application determines the monitoring state and transmits appropriate commands to the ESP32. The embedded hardware then activates the corresponding alert outputs.
+
+Communication interruptions are handled separately by the firmware watchdog, which activates the CONNECTION_LOST warning pattern during active monitoring.
 
 ## 16. Repository Structure
 
@@ -368,26 +391,49 @@ AlertDrive/
 │   ├── AlertDrive/
 │   │   └── AlertDrive.ino
 │   ├── tests/
+│   │   ├── led_test/
+│   │   │   └── led_test.ino
+│   │   ├── buzzer_test/
+│   │   │   └── buzzer_test.ino
+│   │   ├── motor_test/
+│   │   │   └── motor_test.ino
+│   │   ├── camera_test/
+│   │   │   └── camera_test.ino
+│   │   ├── communication_test/
+│   │   │   └── communication_test.ino
+│   │   └── README.md
 │   └── README.md
 │
 ├── hardware/
 │   ├── circuit_diagrams/
+│   │   └── README.md
 │   ├── components.md
 │   ├── pin_configuration.md
-│   └── wiring_guide.md
+│   ├── wiring_guide.md
+│   └── power_supply.md
 │
-├── docs/
-│   └── EPD project documents
-│
-├── assets/
-│   ├── hardware_images/
-│   ├── app_screenshots/
-│   └── product_images/
+├── testing/
+│   ├── test_cases.md
+│   └── test_results.md
 │
 ├── README.md
 ├── INSTALLATION.md
 └── .gitignore
 ```
+
+### Directory Description
+
+| Directory | Purpose |
+|---|---|
+| `app/apk/` | Prebuilt Android installation package |
+| `app/source/` | Complete Android Studio project |
+| `firmware/AlertDrive/` | Integrated ESP32 firmware |
+| `firmware/tests/` | Individual component testing programs |
+| `hardware/` | Hardware configuration and wiring documentation |
+| `hardware/circuit_diagrams/` | Circuit diagram documentation |
+| `testing/` | Product test cases and validation documentation |
+
+Additional EPD documents, application screenshots and product photographs may be added to the `docs/` and `assets/` directories when available.
 
 ## 17. Project Documentation
 
@@ -397,21 +443,91 @@ AlertDrive/
 | [Hardware Components](hardware/components.md) | Hardware component specifications |
 | [GPIO Configuration](hardware/pin_configuration.md) | ESP32 and camera pin assignments |
 | [Wiring Guide](hardware/wiring_guide.md) | Hardware interconnection architecture |
-| [Circuit Diagrams](hardware/circuit_diagrams/) | Circuit and system architecture diagrams |
-| [EPD Documentation](docs/) | Project reports, presentations and related documents |
+| [Circuit Diagrams](hardware/circuit_diagrams/) | Circuit and system architecture documentation |
 | [Installation Guide](INSTALLATION.md) | Product installation and setup instructions |
+| [Firmware Component Testing](firmware/tests/) | Individual Arduino component testing programs |
+| [Component Testing Guide](firmware/tests/README.md) | Test procedures and expected component behaviour |
+| [Product Test Cases](testing/test_cases.md) | Complete set of 65 proposed product test cases |
+| [Product Test Results](testing/test_results.md) | Hardware and integrated product validation records |
 
 ## 18. Product Testing and Validation
 
-The AlertDrive prototype has undergone hardware, software and integrated product testing.
-
-The development team reports successful completion of prototype hardware validation and product testing.
+The AlertDrive prototype has successfully completed integrated hardware validation and product testing, as reported by the development team.
 
 The validation covers the integrated operation of the embedded hardware and Android application, including camera-based monitoring, local wireless communication and hardware alert generation.
 
-Individual reconstructed test sketches included in the repository are provided for development and troubleshooting purposes and may differ from the original test programs.
+### Component Testing
 
-Detailed test procedures and measured results should be referenced from the project test documentation where available.
+Independent Arduino test sketches are included for component verification, development and troubleshooting.
+
+| Component | Test Program | Purpose |
+|---|---|---|
+| LED | [led_test.ino](firmware/tests/led_test/led_test.ino) | Verify visual alert operation |
+| Buzzer | [buzzer_test.ino](firmware/tests/buzzer_test/buzzer_test.ino) | Verify C2N7000 buzzer switching |
+| Vibration Motors | [motor_test.ino](firmware/tests/motor_test/motor_test.ino) | Verify XY-GMOS motor switching |
+| GC2145 Camera | [camera_test.ino](firmware/tests/camera_test/camera_test.ino) | Verify camera initialization, frame capture and JPEG conversion |
+| Communication | [communication_test.ino](firmware/tests/communication_test/communication_test.ino) | Verify Wi-Fi, HTTP commands and communication watchdog |
+
+### Product Test Coverage
+
+A total of 65 proposed test cases are documented across eight testing categories.
+
+| Testing Category | Test ID Range | Proposed Test Cases |
+|---|---|---:|
+| Hardware | HW-01 to HW-07 | 7 |
+| Camera | CAM-01 to CAM-07 | 7 |
+| Android Application | APP-01 to APP-09 | 9 |
+| Network and Communication | NET-01 to NET-12 | 12 |
+| Drowsiness Detection | DET-01 to DET-06 | 6 |
+| Alert States | ALT-01 to ALT-07 | 7 |
+| Alert Timing | TIM-01 to TIM-07 | 7 |
+| Integrated Product | INT-01 to INT-10 | 10 |
+| **Total** | | **65** |
+
+### Testing Objectives
+
+- Verify embedded hardware initialization.
+- Verify individual alert component operation.
+- Verify camera initialization and frame acquisition.
+- Verify image processing and transmission.
+- Verify Android application connectivity.
+- Verify driver monitoring functionality.
+- Verify alert state transitions.
+- Verify communication-loss detection.
+- Verify internet-independent operation.
+- Verify integrated product functionality.
+
+### Integrated Product Validation
+
+| Validation Category | Status |
+|---|---|
+| Hardware Integration | Completed |
+| Camera Integration | Completed |
+| Android Application Integration | Completed |
+| Communication Integration | Completed |
+| Hardware Alert Integration | Completed |
+| Final Hardware Validation | Completed |
+| Product Testing | Completed |
+| Integrated Prototype | Working |
+
+### Testing Documentation
+
+- [Component Testing Programs](firmware/tests/)
+- [Component Testing Guide](firmware/tests/README.md)
+- [Product Test Cases](testing/test_cases.md)
+- [Product Test Results](testing/test_results.md)
+
+### Test Evidence and Limitations
+
+The reconstructed component test sketches are provided for reproducibility and troubleshooting and may differ from the original testing programs.
+
+The development team has confirmed successful integrated prototype operation. However, individual execution records for all 65 proposed test cases are not fully documented.
+
+Quantitative measurements such as detection accuracy, false-positive rate, frame rate and end-to-end response latency are not reported.
+
+Independent compilation and execution of the reconstructed test sketches are not recorded.
+
+Completed prototype validation does not constitute automotive safety certification.
 
 ## 19. Project Status
 
@@ -430,10 +546,16 @@ Detailed test procedures and measured results should be referenced from the proj
 | Offline operation | Implemented |
 | Final hardware validation | Completed |
 | Product testing | Completed |
+| Component test programs | Available |
+| Product test cases | Documented |
+| Product validation records | Documented |
 | Android APK | Available |
+| GitHub release | v1.0.0 |
 | Integrated prototype | Working |
 
-**Overall Project Status: Completed and Working Prototype**
+**Overall Project Status: Completed and Working Academic Prototype**
+
+The completion status reflects the development team's reported integrated prototype validation.
 
 ## 20. Future Improvements
 
@@ -446,6 +568,8 @@ Detailed test procedures and measured results should be referenced from the proj
 - Improve Android application interface.
 - Extend compatibility with different Android devices.
 - Conduct broader performance evaluation under varying environmental conditions.
+- Record quantitative testing and performance measurements.
+- Expand automated software testing.
 
 ## 21. Development Team
 
@@ -456,6 +580,10 @@ Detailed test procedures and measured results should be referenced from the proj
 **Product Category:** Embedded Systems, Computer Vision and Driver Safety
 
 **Development Platform:** ESP32-S3 and Android
+
+**Repository:** [AlertDrive](https://github.com/piyushhhr/AlertDrive)
+
+**Current Release:** [AlertDrive v1.0.0](https://github.com/piyushhhr/AlertDrive/releases/tag/v1.0.0)
 
 ## 22. Disclaimer
 

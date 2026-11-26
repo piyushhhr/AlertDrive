@@ -12,6 +12,16 @@
 ![Testing](https://img.shields.io/badge/Testing-Completed-green)
 ![Status](https://img.shields.io/badge/Status-Working_Prototype-success)
 
+### Download APK
+
+[![Download APK](https://img.shields.io/badge/Download-AlertDrive_APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/piyushhhr/AlertDrive/releases/latest/download/AlertDrive.apk)
+
+[View Releases](https://github.com/piyushhhr/AlertDrive/releases)
+
+The included APK is intended for academic demonstration, prototype operation and testing.
+
+The Android application source code is available in the [app/source](app/source/) directory.
+
 ---
 
 ## 1. Overview
@@ -262,14 +272,6 @@ The AlertDrive Android application serves as the primary image-processing and dr
 - Start and stop monitoring controls.
 - Offline operation.
 
-### Download APK
-
-[![Download APK](https://img.shields.io/badge/Download-AlertDrive_APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/piyushhhr/AlertDrive/releases/latest/download/AlertDrive.apk)
-
-[View Releases](https://github.com/piyushhhr/AlertDrive/releases)
-The included APK is intended for academic demonstration, prototype operation and testing.
-
-The Android application source code is available in the [app/source](app/source/) directory.
 
 ## 14. Installation and Setup
 

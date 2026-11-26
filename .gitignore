@@ -1,0 +1,99 @@
+
+# ==================================================
+# AlertDrive - Git Ignore Configuration
+# ==================================================
+
+# Android Studio and Gradle
+.gradle/
+.kotlin/
+.idea/
+**/build/
+**/.cxx/
+**/.externalNativeBuild/
+local.properties
+*.iml
+captures/
+.externalNativeBuild/
+
+# Android generated packages
+*.apk
+*.aab
+*.ap_
+
+# Allow the official AlertDrive prototype APK
+!/app/apk/AlertDrive.apk
+
+# Android signing keys and credentials
+*.jks
+*.keystore
+keystore.properties
+signing.properties
+google-services.json
+
+# Arduino and ESP32 generated files
+*.elf
+*.bin
+*.hex
+*.map
+*.o
+*.a
+*.d
+*.eep
+.pio/
+.platformio/
+arduino_build_*/
+arduino_cache_*/
+
+# Python (if used)
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Credentials and sensitive configuration
+.env
+.env.*
+!.env.example
+secrets.h
+secrets.properties
+credentials.json
+*.pem
+*.key
+*.p12
+
+# VS Code local configuration
+.vscode/
+.history/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.bak
+*.swp
+*~
+~$*
+
+# Windows system files
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS system files
+.DS_Store
+
+# Private recordings and datasets
+recordings/
+datasets/
+private_data/
+
+# ==================================================
+# End of Git Ignore Configuration
+# ==================================================
+
+# Experimental offline firmware
+/AlertDrive_Offline/

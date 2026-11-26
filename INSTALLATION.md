@@ -163,7 +163,7 @@ The exact output may vary depending on the firmware version and serial connectio
 
 ### Download the Application
 
-[Download AlertDrive APK](app/apk/AlertDrive.apk)
+[Download AlertDrive APK](https://github.com/piyushhhr/AlertDrive/releases/latest/download/AlertDrive.apk)
 
 ### Install the Application
 

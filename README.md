@@ -120,7 +120,6 @@ flowchart TD
 | Protection components | Diodes and resistors |
 | Processing device | Android smartphone |
 | Connectivity | Local Wi-Fi |
-| Power control | ON/OFF switch |
 
 For additional information, refer to the [Hardware Components](hardware/components.md) documentation.
 

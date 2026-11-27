@@ -14,11 +14,10 @@
 | 8 | MOSFET switching module | XY-GMOS | 1 |
 | 9 | Schottky diode | 1N5817 | 2 |
 | 10 | Resistors | Current limiting and MOSFET gate control | As required |
-| 11 | ON/OFF switch | Main power control | 1 |
-| 12 | Connecting wires | Hardware interconnections | As required |
-| 13 | Power supply | Suitable regulated supply | 1 |
-| 14 | USB cable | Programming and prototype power | 1 |
-| 15 | Enclosure | Product housing | 1 |
+| 11 | Connecting wires | Hardware interconnections | As required |
+| 12 | Power supply | Suitable regulated supply | 1 |
+| 13 | USB cable | Programming and prototype power | 1 |
+| 14 | Enclosure | Product housing | 1 |
 
 ## 2. Component Functions
 
@@ -36,21 +35,34 @@ Processes the camera frames, detects signs of driver drowsiness and sends approp
 
 ### LED
 
-Provides visual indications of the monitoring state. It is controlled using GPIO38 through a suitable current-limiting resistor.
+### LED
+
+Provides visual indications of the driver monitoring state.
+
+- Control GPIO: GPIO38
+- Current-limiting resistor: 200 Ω
+- Control logic: Active-HIGH
+- LED colour: Red
 
 ### 5V Buzzer
 
 Provides audible warnings when signs of driver fatigue or communication failure are detected. It is controlled using GPIO14 through the C2N7000 MOSFET.
 
-### C2N7000 MOSFET
 
-An N-channel MOSFET used as the switching device for the 5V buzzer.
+### C2N7000 N-Channel MOSFET
 
-- Control signal: GPIO14
-- ESP32 control voltage: 3.3V
+Used as a low-side switching device for the 5V buzzer.
+
+- Control GPIO: GPIO14
+- Gate control voltage: 3.3V
+- Gate resistor: 200 Ω
+- Gate pull-down resistor: 10 kΩ
 - Load: 5V buzzer
+- Protection diode: 1N5817
 
-The MOSFET's suitability for the buzzer current at a 3.3V gate voltage must be verified.
+The gate pull-down resistor maintains the MOSFET in the OFF state when the control signal is floating.
+
+The MOSFET terminal configuration and suitability for the buzzer current at 3.3V gate voltage must be verified.
 
 ### 3V Coin Vibration Motors
 
@@ -66,9 +78,30 @@ Controls the vibration motors using the GPIO47 output of the ESP32-S3.
 
 The module does not regulate voltage. Its minimum operating voltage and compatibility with the motor supply arrangement must be verified.
 
+### LM2596 DC-DC Buck Converter
+
+Used to provide a reduced supply voltage for the two 3V coin vibration motors.
+
+- Converter type: Step-down DC-DC converter
+- Intended input voltage: 5V DC
+- Required output voltage: 3V DC
+- Connected load: Two parallel vibration motors
+- Output voltage adjustment: Onboard potentiometer
+
+The output voltage must be measured and adjusted before connecting the vibration motors.
+
+Adequate input voltage headroom and output current capacity must be verified under load.
+
 ### 1N5817 Schottky Diode
 
-Used where required for flyback protection against voltage transients produced by inductive loads.
+Two 1N5817 Schottky diodes are included in the circuit diagram for inductive load protection.
+
+- Quantity: 2
+- Maximum average forward current: 1A
+- Maximum repetitive reverse voltage: 20V
+- Application: Flyback protection for the buzzer and vibration motor circuits
+
+The cathode must face the positive supply terminal, and the anode must face the negative switched terminal.
 
 ### SMBJ5.0A TVS Diode
 

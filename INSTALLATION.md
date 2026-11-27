@@ -178,7 +178,7 @@ The included APK is a prototype development build.
 
 ## 11. Connect the Android Smartphone
 
-1. Switch on the AlertDrive hardware.
+1. Connect power to the AlertDrive hardware.
 2. Open the smartphone Wi-Fi settings.
 3. Select the ALERT-DRIVE network.
 4. Enter the network password configured in the ESP32 firmware.
@@ -257,7 +257,7 @@ The ESP32 firmware uses a five-second communication watchdog during active monit
 2. Verify that the application enters standby mode.
 3. Confirm that the LED, buzzer and vibration motors are switched off.
 4. Disconnect from the AlertDrive Wi-Fi network if required.
-5. Switch off the hardware when the system is no longer needed.
+5. Disconnect power from the hardware when the system is no longer needed.
 
 ## 16. Build the Android Application from Source
 

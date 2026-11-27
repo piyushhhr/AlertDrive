@@ -112,16 +112,35 @@ flowchart TD
 | Flash memory | 16 MB |
 | PSRAM | 8 MB |
 | Camera | GC2145 |
-| Visual alert | LED |
+| Visual alert | Red LED |
 | Audible alert | 5V buzzer |
-| Tactile alert | 3V coin vibration motors |
+| Tactile alert | Two 3V coin vibration motors |
 | Buzzer switching | C2N7000 N-channel MOSFET |
 | Motor switching | XY-GMOS MOSFET module |
-| Protection components | Diodes and resistors |
+| Motor voltage regulation | LM2596 buck converter |
+| Target motor supply voltage | 3V DC |
+| Protection diodes | Two 1N5817 Schottky diodes |
+| LED current-limiting resistor | 200 Ω |
+| MOSFET gate resistor | 200 Ω |
+| MOSFET gate pull-down resistor | 10 kΩ |
 | Processing device | Android smartphone |
 | Connectivity | Local Wi-Fi |
 
 For additional information, refer to the [Hardware Components](hardware/components.md) documentation.
+
+### Hardware Circuit Diagram
+
+![AlertDrive Circuit Diagram](hardware/circuit_diagrams/AlertDrive_Circuit_Diagram.png)
+
+[View Full-Size Circuit Diagram](hardware/circuit_diagrams/AlertDrive_Circuit_Diagram.png)
+
+[Detailed Circuit Documentation](hardware/circuit_diagrams/README.md)
+
+The supplied circuit diagram illustrates the alert hardware, voltage regulation and protection circuitry. The GC2145 camera is connected through the compatible ESP32-S3 camera interface and is not illustrated in the supplied circuit diagram.
+
+The diagram contains component representation differences documented in the circuit diagram README.
+
+The LM2596 output voltage under load and XY-GMOS compatibility with the separate motor supply arrangement remain independently unverified.
 
 ## 7. GPIO Configuration
 
@@ -129,9 +148,11 @@ For additional information, refer to the [Hardware Components](hardware/componen
 
 | Component | ESP32 GPIO | Control Circuit |
 |---|---|---|
-| LED | GPIO38 | Current-limiting resistor |
+| LED | GPIO38 | 200 Ω current-limiting resistor |
 | Buzzer | GPIO14 | C2N7000 MOSFET |
 | Vibration motors | GPIO47 | XY-GMOS MOSFET module |
+
+All three alert outputs use active-HIGH control logic.
 
 ### Camera Pin Configuration
 
@@ -199,7 +220,7 @@ AlertDrive uses multiple monitoring states to determine the appropriate hardware
 
 ### State Descriptions
 
-**STANDBY:** Driver monitoring is inactive and all alert components are switched off.
+**STANDBY:** Driver monitoring is inactive and all alert components are deactivated.
 
 **NORMAL:** The driver is detected in a normal monitoring state.
 
@@ -277,6 +298,8 @@ The AlertDrive Android application serves as the primary image-processing and dr
 - Hardware alert communication.
 - Start and stop monitoring controls.
 - Offline operation.
+- Application status indicators.
+- Camera and communication error handling.
 
 ### Application Source Code
 
@@ -290,6 +313,58 @@ The source project includes Kotlin application files, Android resources, Gradle 
 
 The prebuilt APK is available through the download section at the top of this README.
 
+### Application Screenshots
+
+The AlertDrive Android application provides a real-time monitoring interface with colour-coded driver states, device connectivity information, camera preview controls and monitoring controls.
+
+#### Application Startup and Normal Monitoring
+
+| System Standby | Starting Monitoring | Driver Alert |
+|:---:|:---:|:---:|
+| <img src="assets/app_screenshots/01_home_screen.png" width="230" alt="System Standby"> | <img src="assets/app_screenshots/02_system_starting.png" width="230" alt="Starting Monitoring"> | <img src="assets/app_screenshots/03_device_connected.png" width="230" alt="Driver Alert"> |
+| Monitoring inactive | Establishing device communication | Normal driver monitoring |
+
+#### Drowsiness Detection and Alerts
+
+| Eyes Closing | Drowsiness Warning | Drowsiness Detected |
+|:---:|:---:|:---:|
+| <img src="assets/app_screenshots/04_closing_state.png" width="230" alt="Eyes Closing"> | <img src="assets/app_screenshots/05_warning_state.png" width="230" alt="Drowsiness Warning"> | <img src="assets/app_screenshots/06_drowsy_state.png" width="230" alt="Drowsiness Detected"> |
+| Eye closure detected | Elevated drowsiness warning | Critical drowsiness alert |
+
+#### Face Detection and Communication Faults
+
+| No Face Detected | Camera Unavailable | Connection Lost |
+|:---:|:---:|:---:|
+| <img src="assets/app_screenshots/07_no_face_state.png" width="230" alt="No Face Detected"> | <img src="assets/app_screenshots/08_camera_unavailable.png" width="230" alt="Camera Unavailable"> | <img src="assets/app_screenshots/09_connection_lost.png" width="230" alt="Connection Lost"> |
+| Driver face unavailable | Camera frames unavailable | Device communication interrupted |
+
+#### Monitoring Error Handling
+
+| Monitoring Interrupted | Monitoring Failed |
+|:---:|:---:|
+| <img src="assets/app_screenshots/10_monitoring_interrupted.png" width="230" alt="Monitoring Interrupted"> | <img src="assets/app_screenshots/11_monitoring_failed.png" width="230" alt="Monitoring Failed"> |
+| Monitoring unexpectedly interrupted | Monitoring operation failed |
+
+### Application State Indicators
+
+| Application State | Indicator Colour | Description |
+|---|---|---|
+| System Standby | Grey | Monitoring inactive |
+| Starting Monitoring | Blue | Establishing device communication |
+| Driver Alert | Green | Normal driver monitoring |
+| Eyes Closing | Yellow | Eye closure detected |
+| Drowsiness Warning | Orange | Elevated drowsiness warning |
+| Drowsiness Detected | Red | Critical drowsiness alert |
+| No Face Detected | Blue | Driver face unavailable |
+| Camera Unavailable | Blue | Camera frames unavailable |
+| Connection Lost | Purple | Device communication interrupted |
+| Monitoring Interrupted | Purple | Monitoring unexpectedly interrupted |
+| Monitoring Failed | Purple | Monitoring operation failed |
+
+[View All Application Screenshots](assets/app_screenshots/)
+
+The screenshots illustrate application interface states, monitoring functionality and error handling. They do not independently establish detection accuracy or electrical performance.
+
 ## 14. Installation and Setup
 
 ### Prerequisites
@@ -299,6 +374,7 @@ The prebuilt APK is available through the download section at the top of this RE
 - Android smartphone.
 - AlertDrive hardware components.
 - Arduino IDE with ESP32 board support.
+- Compatible regulated power supply.
 - Verified hardware connections.
 
 ### ESP32 Firmware Installation
@@ -329,7 +405,7 @@ If the ESP32 already contains the working AlertDrive firmware, uploading the fir
 2. Open the APK on the Android smartphone.
 3. Allow installation from the selected source if prompted.
 4. Install the application.
-5. Power on the AlertDrive hardware.
+5. Connect power to the AlertDrive hardware.
 6. Connect the smartphone to the ALERT-DRIVE Wi-Fi network using the configured network credentials.
 7. Open the AlertDrive application.
 8. Verify the ESP32 connection and camera availability.
@@ -350,7 +426,7 @@ For additional setup instructions, refer to the [Installation Guide](INSTALLATIO
 
 ```mermaid
 flowchart TD
-    A[Power On AlertDrive] --> B[Initialize ESP32 and Camera]
+    A[Connect Power to AlertDrive] --> B[Initialize ESP32 and Camera]
     B --> C[Start Local Wi-Fi Access Point]
     C --> D[Connect Android Application]
     D --> E[Start Monitoring]
@@ -405,6 +481,7 @@ AlertDrive/
 │
 ├── hardware/
 │   ├── circuit_diagrams/
+│   │   ├── AlertDrive_Circuit_Diagram.png
 │   │   └── README.md
 │   ├── components.md
 │   ├── pin_configuration.md
@@ -414,6 +491,20 @@ AlertDrive/
 ├── testing/
 │   ├── test_cases.md
 │   └── test_results.md
+│
+├── assets/
+│   └── app_screenshots/
+│       ├── 01_home_screen.png
+│       ├── 02_system_starting.png
+│       ├── 03_device_connected.png
+│       ├── 04_closing_state.png
+│       ├── 05_warning_state.png
+│       ├── 06_drowsy_state.png
+│       ├── 07_no_face_state.png
+│       ├── 08_camera_unavailable.png
+│       ├── 09_connection_lost.png
+│       ├── 10_monitoring_interrupted.png
+│       └── 11_monitoring_failed.png
 │
 ├── README.md
 ├── INSTALLATION.md
@@ -429,20 +520,23 @@ AlertDrive/
 | `firmware/AlertDrive/` | Integrated ESP32 firmware |
 | `firmware/tests/` | Individual component testing programs |
 | `hardware/` | Hardware configuration and wiring documentation |
-| `hardware/circuit_diagrams/` | Circuit diagram documentation |
+| `hardware/circuit_diagrams/` | Hardware circuit diagram and architecture documentation |
 | `testing/` | Product test cases and validation documentation |
+| `assets/app_screenshots/` | Android application screenshots covering monitoring states and error handling |
 
-Additional EPD documents, application screenshots and product photographs may be added to the `docs/` and `assets/` directories when available.
+Additional EPD documents, hardware photographs and final product photographs may be added to the `docs/` and `assets/` directories when available.
 
 ## 17. Project Documentation
 
 | Document | Description |
 |---|---|
 | [Firmware Documentation](firmware/README.md) | ESP32 firmware configuration and operation |
-| [Hardware Components](hardware/components.md) | Hardware component specifications |
+| [Hardware Components](hardware/components.md) | Hardware component specifications and bill of materials |
 | [GPIO Configuration](hardware/pin_configuration.md) | ESP32 and camera pin assignments |
 | [Wiring Guide](hardware/wiring_guide.md) | Hardware interconnection architecture |
+| [Power Supply Configuration](hardware/power_supply.md) | Voltage regulation and power distribution |
 | [Circuit Diagrams](hardware/circuit_diagrams/) | Circuit and system architecture documentation |
+| [Application Screenshots](assets/app_screenshots/) | 11 application interface screenshots |
 | [Installation Guide](INSTALLATION.md) | Product installation and setup instructions |
 | [Firmware Component Testing](firmware/tests/) | Individual Arduino component testing programs |
 | [Component Testing Guide](firmware/tests/README.md) | Test procedures and expected component behaviour |
@@ -515,6 +609,7 @@ A total of 65 proposed test cases are documented across eight testing categories
 - [Component Testing Guide](firmware/tests/README.md)
 - [Product Test Cases](testing/test_cases.md)
 - [Product Test Results](testing/test_results.md)
+- [Application Screenshots](assets/app_screenshots/)
 
 ### Test Evidence and Limitations
 
@@ -525,6 +620,10 @@ The development team has confirmed successful integrated prototype operation. Ho
 Quantitative measurements such as detection accuracy, false-positive rate, frame rate and end-to-end response latency are not reported.
 
 Independent compilation and execution of the reconstructed test sketches are not recorded.
+
+Electrical measurements including the LM2596 output voltage under load, vibration motor startup current and total system power consumption are not recorded.
+
+The separate motor supply arrangement must be independently verified against the XY-GMOS module's electrical specifications.
 
 Completed prototype validation does not constitute automotive safety certification.
 
@@ -545,10 +644,14 @@ Completed prototype validation does not constitute automotive safety certificati
 | Offline operation | Implemented |
 | Final hardware validation | Completed |
 | Product testing | Completed |
+| Hardware documentation | Available |
+| Circuit diagram | Available |
+| Bill of materials | Documented |
 | Component test programs | Available |
 | Product test cases | Documented |
 | Product validation records | Documented |
 | Android APK | Available |
+| Application screenshots | Documented |
 | GitHub release | v1.0.0 |
 | Integrated prototype | Working |
 
@@ -569,6 +672,8 @@ The completion status reflects the development team's reported integrated protot
 - Conduct broader performance evaluation under varying environmental conditions.
 - Record quantitative testing and performance measurements.
 - Expand automated software testing.
+- Develop a fully verified PCB schematic and layout.
+- Optimize the power distribution architecture.
 
 ## 21. Development Team
 
@@ -590,7 +695,9 @@ AlertDrive is an academic engineering prototype developed for educational, exper
 
 Although prototype hardware validation and product testing have been completed, AlertDrive is not a certified automotive safety system.
 
-It must not be relied upon as a substitute for attentive driving, adequate rest or certified driver monitoring equipment.
+The provided circuit diagram and hardware documentation describe the intended prototype architecture and must not be treated as a fully verified manufacturing schematic.
+
+AlertDrive must not be relied upon as a substitute for attentive driving, adequate rest or certified driver monitoring equipment.
 
 ---
 

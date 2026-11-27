@@ -1,23 +1,28 @@
 # AlertDrive – Hardware Components
 
+
 ## 1. Bill of Materials (BOM)
 
 | S.No. | Component | Specification | Quantity |
-|---|---|---|---|
+|---|---|---|---:|
 | 1 | Microcontroller | ESP32-S3 N16R8, 16 MB Flash, 8 MB PSRAM | 1 |
 | 2 | Camera module | GC2145 | 1 |
-| 3 | Android smartphone | Drowsiness detection and processing | 1 |
-| 4 | LED | Visual alert indicator | 1 |
-| 5 | Buzzer | 5V buzzer | 1 |
-| 6 | Coin vibration motor | 3V DC | As installed |
+| 3 | Android smartphone | Drowsiness detection and image processing | 1 |
+| 4 | LED | Red indicator LED | 1 |
+| 5 | Buzzer | 5V DC | 1 |
+| 6 | Coin vibration motor | 3V DC | 2 |
 | 7 | N-channel MOSFET | C2N7000 | 1 |
 | 8 | MOSFET switching module | XY-GMOS | 1 |
-| 9 | Schottky diode | 1N5817 | 2 |
-| 10 | Resistors | Current limiting and MOSFET gate control | As required |
-| 11 | Connecting wires | Hardware interconnections | As required |
-| 12 | Power supply | Suitable regulated supply | 1 |
-| 13 | USB cable | Programming and prototype power | 1 |
-| 14 | Enclosure | Product housing | 1 |
+| 9 | DC-DC buck converter | LM2596 | 1 |
+| 10 | Schottky diode | 1N5817 | 2 |
+| 11 | LED current-limiting resistor | 200 Ω | 1 |
+| 12 | MOSFET gate resistor | 200 Ω | 1 |
+| 13 | MOSFET gate pull-down resistor | 10 kΩ | 1 |
+| 14 | Connecting wires | Suitable hardware interconnections | As required |
+| 15 | Power supply | Compatible regulated 5V supply | 1 |
+| 16 | USB cable | Programming and prototype power | 1 |
+| 17 | Enclosure | Product housing | 1 |
+
 
 ## 2. Component Functions
 
